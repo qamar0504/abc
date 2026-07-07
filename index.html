@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>物资管理系统</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', '"PingFang SC"', '"Hiragino Sans GB"', '"Microsoft YaHei"', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="/styles/main.css" />
+</head>
+<body class="bg-slate-50 text-slate-800 text-sm antialiased">
+
+  <!-- 移动端遮罩 -->
+  <div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+  <!-- 左侧导航栏 -->
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-header">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-base font-semibold text-white">物资管理系统</h1>
+          <p class="text-xs text-blue-200">IT Asset Management</p>
+        </div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="#" data-nav="ledger" class="nav-item active">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        <span>物资总台账</span>
+      </a>
+      <a href="#" data-nav="records" class="nav-item">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        <span>签收/归还记录</span>
+      </a>
+      <a href="#" data-nav="location" class="nav-item">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        <span>部门与位置</span>
+      </a>
+      <a href="#" data-nav="archive" class="nav-item">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>
+        <span>纸质档案登记</span>
+      </a>
+      <a href="#" data-nav="approval" class="nav-item">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <span>审批与导出</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="text-xs text-blue-200/60">v1.0.0</div>
+    </div>
+  </aside>
+
+  <!-- 主内容区域 -->
+  <main class="main-content">
+    <!-- 顶部栏 -->
+    <header class="top-bar">
+      <button id="menu-btn" class="menu-btn">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <h2 id="page-title" class="text-lg font-semibold text-slate-800">物资总台账</h2>
+      <div class="flex items-center gap-3">
+        <span class="text-xs text-slate-500 hidden sm:inline">数据自动保存</span>
+        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+          <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+        </div>
+      </div>
+    </header>
+
+    <!-- 模块页面 -->
+    <div class="content-area">
+      <!-- 物资总台账 -->
+      <div id="page-ledger" class="module-page">
+        <div id="ledger-content"></div>
+      </div>
+
+      <!-- 签收/归还记录 -->
+      <div id="page-records" class="module-page hidden">
+        <div id="records-content"></div>
+      </div>
+
+      <!-- 部门与位置对照表 -->
+      <div id="page-location" class="module-page hidden">
+        <div id="location-content"></div>
+      </div>
+
+      <!-- 纸质档案登记 -->
+      <div id="page-archive" class="module-page hidden">
+        <div id="archive-content"></div>
+      </div>
+
+      <!-- 审批与导出 -->
+      <div id="page-approval" class="module-page hidden">
+        <div id="approval-content"></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Toast容器 -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- ===== 资产编辑弹窗 ===== -->
+  <div id="asset-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="asset-form-title" class="text-base font-semibold text-slate-800">新增资产</h3>
+        <button class="modal-close" onclick="LedgerModule.hideForm()">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <form id="asset-form" class="modal-body" onsubmit="event.preventDefault(); LedgerModule.saveForm()">
+        <input type="hidden" id="asset-id">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="form-label">资产编号 <span class="text-red-500">*</span></label>
+            <input type="text" id="asset-code" class="form-input" placeholder="如 ZC-2024-001" required>
+          </div>
+          <div>
+            <label class="form-label">设备名称 <span class="text-red-500">*</span></label>
+            <input type="text" id="asset-device-name" class="form-input" placeholder="如 ThinkPad T14s" required>
+          </div>
+          <div>
+            <label class="form-label">设备类型</label>
+            <select id="asset-device-type" class="form-input">
+              <option value="台式机">台式机</option>
+              <option value="笔记本">笔记本</option>
+              <option value="显示器">显示器</option>
+              <option value="打印机">打印机</option>
+              <option value="网络设备">网络设备</option>
+              <option value="软件">软件</option>
+              <option value="其他">其他</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label">状态</label>
+            <select id="asset-status" class="form-input">
+              <option value="闲置">闲置</option>
+              <option value="在用">在用</option>
+              <option value="维修中">维修中</option>
+              <option value="已报废">已报废</option>
+              <option value="已转出">已转出</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label">部门</label>
+            <input type="text" id="asset-department" class="form-input" placeholder="如 技术部">
+          </div>
+          <div>
+            <label class="form-label">当前使用者</label>
+            <input type="text" id="asset-user" class="form-input" placeholder="如 张三">
+          </div>
+          <div>
+            <label class="form-label">位置</label>
+            <input type="text" id="asset-location" class="form-input" placeholder="如 A栋3楼301">
+          </div>
+          <div>
+            <label class="form-label">取得年份</label>
+            <input type="text" id="asset-year" class="form-input" placeholder="如 2024">
+          </div>
+        </div>
+        <div class="mt-4">
+          <label class="form-label">备注</label>
+          <textarea id="asset-remark" class="form-input" rows="2" placeholder="配置信息、备注等"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" onclick="LedgerModule.hideForm()">取消</button>
+          <button type="submit" class="btn-primary">保存</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== 签收/归还记录弹窗 ===== -->
+  <div id="record-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="record-form-title" class="text-base font-semibold text-slate-800">新增记录</h3>
+        <button class="modal-close" onclick="RecordsModule.hideForm()">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <form id="record-form" class="modal-body" onsubmit="event.preventDefault(); RecordsModule.saveForm()">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="form-label">选择资产 <span class="text-red-500">*</span></label>
+            <select id="record-asset-code" class="form-input" required onchange="document.getElementById('record-device-name').value = this.options[this.selectedIndex]?.dataset.name || ''">
+              <option value="">请选择资产</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label">设备名称</label>
+            <input type="text" id="record-device-name" class="form-input bg-slate-50" readonly>
+          </div>
+          <div>
+            <label class="form-label" id="dept-label">部门</label>
+            <input type="text" id="record-dept" class="form-input" placeholder="请输入部门">
+          </div>
+          <div>
+            <label class="form-label" id="person-label">签收人/归还人 <span class="text-red-500">*</span></label>
+            <input type="text" id="record-person" class="form-input" placeholder="请输入姓名" required>
+          </div>
+          <div>
+            <label class="form-label">日期 <span class="text-red-500">*</span></label>
+            <input type="date" id="record-date" class="form-input" required>
+          </div>
+          <div id="purpose-group">
+            <label class="form-label">用途说明</label>
+            <input type="text" id="record-purpose" class="form-input" placeholder="如 日常办公">
+          </div>
+          <div id="condition-group" class="hidden">
+            <label class="form-label">设备状态评估</label>
+            <select id="record-condition" class="form-input">
+              <option value="良好">良好</option>
+              <option value="需维修">需维修</option>
+              <option value="已损坏">已损坏</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" onclick="RecordsModule.hideForm()">取消</button>
+          <button type="submit" class="btn-primary">保存</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== 位置编辑弹窗 ===== -->
+  <div id="location-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="location-form-title" class="text-base font-semibold text-slate-800">新增位置</h3>
+        <button class="modal-close" onclick="LocationModule.hideForm()">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <form id="location-form" class="modal-body" onsubmit="event.preventDefault(); LocationModule.saveForm()">
+        <input type="hidden" id="loc-id">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="form-label">位置/房间编号 <span class="text-red-500">*</span></label>
+            <input type="text" id="loc-code" class="form-input" placeholder="如 A-301" required>
+          </div>
+          <div>
+            <label class="form-label">位置描述</label>
+            <input type="text" id="loc-desc" class="form-input" placeholder="如 技术部办公区">
+          </div>
+          <div>
+            <label class="form-label">部门代码</label>
+            <input type="text" id="loc-dept-code" class="form-input" placeholder="如 TECH">
+          </div>
+          <div>
+            <label class="form-label">部门全称 <span class="text-red-500">*</span></label>
+            <input type="text" id="loc-dept-name" class="form-input" placeholder="如 技术部" required>
+          </div>
+          <div>
+            <label class="form-label">楼层</label>
+            <input type="text" id="loc-floor" class="form-input" placeholder="如 3">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" onclick="LocationModule.hideForm()">取消</button>
+          <button type="submit" class="btn-primary">保存</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== 档案编辑弹窗 ===== -->
+  <div id="archive-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="archive-form-title" class="text-base font-semibold text-slate-800">新增档案</h3>
+        <button class="modal-close" onclick="ArchiveModule.hideForm()">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <form id="archive-form" class="modal-body" onsubmit="event.preventDefault(); ArchiveModule.saveForm()">
+        <input type="hidden" id="archive-id">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="form-label">关联流水号</label>
+            <input type="text" id="archive-related-serial" class="form-input" placeholder="如 QS-2024-0001">
+          </div>
+          <div>
+            <label class="form-label">类型 <span class="text-red-500">*</span></label>
+            <select id="archive-type" class="form-input" required>
+              <option value="签收单">签收单</option>
+              <option value="归还单">归还单</option>
+              <option value="位置变更单">位置变更单</option>
+              <option value="维修单">维修单</option>
+              <option value="报废单">报废单</option>
+            </select>
+          </div>
+          <div>
+            <label class="form-label">日期 <span class="text-red-500">*</span></label>
+            <input type="date" id="archive-date" class="form-input" required>
+          </div>
+          <div>
+            <label class="form-label">当事人 <span class="text-red-500">*</span></label>
+            <input type="text" id="archive-person" class="form-input" placeholder="请输入姓名" required>
+          </div>
+          <div>
+            <label class="form-label">部门</label>
+            <input type="text" id="archive-department" class="form-input" placeholder="请输入部门">
+          </div>
+          <div>
+            <label class="form-label">资产编号</label>
+            <input type="text" id="archive-asset-code" class="form-input" placeholder="如 ZC-2024-001">
+          </div>
+        </div>
+        <div class="mt-4">
+          <label class="form-label">操作内容</label>
+          <textarea id="archive-content" class="form-input" rows="2" placeholder="描述操作内容"></textarea>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          <div>
+            <label class="form-label">签字确认</label>
+            <input type="text" id="archive-signature" class="form-input" placeholder="签字人姓名">
+          </div>
+          <div>
+            <label class="form-label">存档位置</label>
+            <input type="text" id="archive-storage" class="form-input" placeholder="如 A柜3层">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" onclick="ArchiveModule.hideForm()">取消</button>
+          <button type="submit" class="btn-primary">保存</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- JS加载 -->
+  <script src="/js/data.js"></script>
+  <script src="/js/app.js"></script>
+  <script src="/js/modules/ledger.js"></script>
+  <script src="/js/modules/records.js"></script>
+  <script src="/js/modules/location.js"></script>
+  <script src="/js/modules/archive.js"></script>
+  <script src="/js/modules/approval.js"></script>
+</body>
+</html>
